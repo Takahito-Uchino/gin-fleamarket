@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/Takahito-Uchino/gin-fleamarket/controllers"
+	"github.com/Takahito-Uchino/gin-fleamarket/infra"
 	"github.com/Takahito-Uchino/gin-fleamarket/models"
 	"github.com/Takahito-Uchino/gin-fleamarket/repositories"
 	"github.com/Takahito-Uchino/gin-fleamarket/services"
@@ -9,6 +10,7 @@ import (
 )
 
 func main() {
+	infra.Initialize()
 	items := []models.Item{
 		{ID: 1, Name: "商品1", Price: 1000, Description: "説明1", SoldOut: false},
 		{ID: 2, Name: "商品2", Price: 2000, Description: "説明2", SoldOut: true},
