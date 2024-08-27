@@ -4,6 +4,7 @@ import (
 	"github.com/Takahito-Uchino/gin-fleamarket/controllers"
 	"github.com/Takahito-Uchino/gin-fleamarket/infra"
 	"github.com/Takahito-Uchino/gin-fleamarket/middlewares"
+	"github.com/gin-contrib/cors"
 
 	// "github.com/Takahito-Uchino/gin-fleamarket/models"
 	"github.com/Takahito-Uchino/gin-fleamarket/repositories"
@@ -31,6 +32,7 @@ func main() {
 	authController := controllers.NewAuthController(authService)
 
 	r := gin.Default()
+	r.Use(cors.Default())
 	itemRouter := r.Group("/items")
 	itemRouterWithAuth := r.Group("/items", middlewares.AuthMiddleware(authService))
 	authRouter := r.Group("/auth")
