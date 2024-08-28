@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -8,8 +9,10 @@ import (
 	"os"
 	"testing"
 
+	"github.com/Takahito-Uchino/gin-fleamarket/dto"
 	"github.com/Takahito-Uchino/gin-fleamarket/infra"
 	"github.com/Takahito-Uchino/gin-fleamarket/models"
+	"github.com/Takahito-Uchino/gin-fleamarket/services"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
@@ -73,4 +76,36 @@ func TestFindAll(t *testing.T) {
 	// アサーション
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, 3, len(res["data"]))
+}
+
+func TestCreate(t *testing.T) {
+
+	// テストのセットアップ
+	router := setup()
+
+	token, err := services.CreateToken(1, "test1@example.com")
+	assert.Equal(t, nil, err)
+
+	createItemInput := dto.CreateItemInput{
+		Name:        "テストアイテム4",
+		Price:       4000,
+		Description: "Createテスト",
+	}
+
+	reqBody, _ := json.Marshal(createItemInput)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("POST", "/items", bytes.NewBuffer(reqBody))
+	req.Header.Set("Authorization", "Bearer "+*token)
+
+	// APIリクエストの実行
+	router.ServeHTTP(w, req)
+
+	// APIの実行結果を取得
+	var res map[string]models.Item
+	json.Unmarshal([]byte(w.Body.Bytes()), &res)
+
+	// アサーション
+	assert.Equal(t, http.StatusCreated, w.Code)
+	assert.Equal(t, uint(4), res["data"].ID)
 }
